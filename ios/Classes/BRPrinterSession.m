@@ -312,7 +312,7 @@
 
       [settings setAutoCut:TRUE];
 
-      [settings setHalftone:BRLMPrintSettingsHalftoneErrorDiffusion]
+      [settings setHalftone:BRLMPrintSettingsHalftoneErrorDiffusion];
       return settings;
       }
       break;
