@@ -9,7 +9,7 @@ String localMavenPath = project.mkdir("build").absolutePath
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -20,13 +20,14 @@ buildscript {
 rootProject.allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral() 
 
         maven {
             url "file://$localMavenPath"
         }
     }
 }
+
 
 apply plugin: 'com.android.library'
 
