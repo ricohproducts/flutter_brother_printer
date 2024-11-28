@@ -10,20 +10,24 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+                gradlePluginPortal()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath 'com.android.tools.build:gradle:7.3.0'
     }
 }
 
 rootProject.allprojects {
     repositories {
         google()
-        mavenCentral() 
-
+        mavenCentral()
+        gradlePluginPortal()
         maven {
             url "file://$localMavenPath"
+        }
+        maven {
+            url 'https://repo1.maven.org/maven2/'
         }
     }
 }
