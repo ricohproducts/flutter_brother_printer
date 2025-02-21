@@ -1,3 +1,7 @@
+## [0.2.1]
+
+* remove deprecated `PluginRegistry.Registrar` for Android
+
 ## [0.2.0]
 
 * Upgrade SDK to version 4.7.2
