@@ -1,10 +1,15 @@
 package co.eivo.brother_printer;
 
 import android.app.Activity;
+import android.Manifest;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Build;
+import android.content.pm.PackageManager;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Map;
@@ -26,6 +31,8 @@ public class BrotherPrinterPlugin implements FlutterPlugin, MethodCallHandler, A
   private MethodChannel channel;
   private Context context;
   private Activity activity;
+
+  private static final int REQUEST_BLUETOOTH_SCAN = 1001;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -55,11 +62,9 @@ public class BrotherPrinterPlugin implements FlutterPlugin, MethodCallHandler, A
   public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
     if (call.method.equals("searchDevices")) {
       searchDevices(call, result);
-    }
-    else if (call.method.equals("printPDF")) {
+    } else if (call.method.equals("printPDF")) {
       printPDF(call, result);
-    }
-    else {
+    } else {
       result.notImplemented();
     }
   }
@@ -70,29 +75,21 @@ public class BrotherPrinterPlugin implements FlutterPlugin, MethodCallHandler, A
   }
 
   public void searchDevices(@NonNull MethodCall call, @NonNull final Result result) {
-    int delay = call.argument("delay");
-    ArrayList<String> printerNames = call.argument("printerNames");
-
-    PrinterDiscovery.getInstance().start(delay, printerNames, new BRPrinterDiscoveryCompletion(){
-      public void completion(final ArrayList<Map<String, String>> devices, final Exception exception) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-          @Override
-          public void run() {
-            if (exception != null) {
-              if (exception instanceof PrinterErrorException) {
-                PrinterErrorException castException = (PrinterErrorException)exception;
-                result.error(castException.code.toString(), castException.getMessage(), null);
-              }
-              else {
-                result.error("unknown", exception.getMessage(), null);
-              }
-            } else {
-              result.success(devices);
-            }
-          }
-        });
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      if (ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_SCAN)
+              != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(activity,
+                new String[]{Manifest.permission.BLUETOOTH_SCAN},
+                REQUEST_BLUETOOTH_SCAN);
+        startScan(call, result, false);
+      } else {
+        // Permission already given
+        startScan(call, result, true);
       }
-    });
+    } else {
+      // Android < 12, permissions not required
+      startScan(call, result, true);
+    }
   }
 
   public void printPDF(@NonNull MethodCall call, @NonNull final Result result) {
@@ -106,17 +103,16 @@ public class BrotherPrinterPlugin implements FlutterPlugin, MethodCallHandler, A
     String labelSize = call.argument("labelSize");
 
     PrinterSession session = new PrinterSession();
-    session.print(activity, context, modelCode, path, copies, ipAddress, macAddress, bleAdvertiseLocalName, paperSettingsPath, labelSize, new BRPrinterSessionCompletion(){
+    session.print(activity, context, modelCode, path, copies, ipAddress, macAddress, bleAdvertiseLocalName, paperSettingsPath, labelSize, new BRPrinterSessionCompletion() {
       public void completion(final Exception exception) {
         new Handler(Looper.getMainLooper()).post(new Runnable() {
           @Override
           public void run() {
             if (exception != null) {
               if (exception instanceof PrinterErrorException) {
-                PrinterErrorException castException = (PrinterErrorException)exception;
+                PrinterErrorException castException = (PrinterErrorException) exception;
                 result.error(castException.code.toString(), castException.getMessage(), null);
-              }
-              else {
+              } else {
                 result.error(exception.getMessage(), exception.getMessage(), null);
               }
             } else {
@@ -126,5 +122,48 @@ public class BrotherPrinterPlugin implements FlutterPlugin, MethodCallHandler, A
         });
       }
     });
+  }
+
+  // code for Bluetooth since Android >= 31
+
+  private void startScan(@NonNull MethodCall call, @NonNull final Result result, boolean scanBluetooth) {
+    int delay = call.argument("delay");
+    ArrayList<String> printerNames = call.argument("printerNames");
+
+    PrinterDiscovery.getInstance().start(delay, printerNames, scanBluetooth, new BRPrinterDiscoveryCompletion() {
+      public void completion(final ArrayList<Map<String, String>> devices, final Exception exception) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+          @Override
+          public void run() {
+            if (exception != null) {
+              if (exception instanceof PrinterErrorException) {
+                PrinterErrorException castException = (PrinterErrorException) exception;
+                result.error(castException.code.toString(), castException.getMessage(), null);
+              } else {
+                result.error("unknown", exception.getMessage(), null);
+              }
+            } else {
+              result.success(devices);
+            }
+          }
+        });
+      }
+    });
+  }
+
+  public void onRequestPermissionsResult(int requestCode,
+                                         @NonNull String[] permissions,
+                                         @NonNull int[] grantResults) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+          activity.onRequestPermissionsResult(requestCode, permissions, grantResults);
+      }
+
+      if (requestCode == REQUEST_BLUETOOTH_SCAN) {
+      if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        // TODO: startScan
+      } else {
+        // Permission refused
+      }
+    }
   }
 }
