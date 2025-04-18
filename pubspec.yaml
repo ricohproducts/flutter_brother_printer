@@ -14,6 +14,8 @@ dependencies:
   collection: '>=1.0.0'
 
 flutter:
+  assets:
+    - assets/paper_info_bin/
   plugin:
     platforms:
       android:
