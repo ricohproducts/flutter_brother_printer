@@ -1,3 +1,8 @@
+## [0.2.3]
+
+* fix Bluetooth for Android
+* remove paper info binaries
+
 ## [0.2.2]
 
 * add paper info binaries
