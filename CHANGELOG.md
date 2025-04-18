@@ -1,3 +1,8 @@
+## [0.2.2]
+
+* add paper info binaries
+* remove brother_print_sdk-4.7.2.aar file and use jitpack
+
 ## [0.2.1]
 
 * remove deprecated `PluginRegistry.Registrar` for Android
