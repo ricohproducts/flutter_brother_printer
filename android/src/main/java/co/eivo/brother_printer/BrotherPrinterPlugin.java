@@ -77,9 +77,10 @@ public class BrotherPrinterPlugin implements FlutterPlugin, MethodCallHandler, A
   public void searchDevices(@NonNull MethodCall call, @NonNull final Result result) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       if (ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_SCAN)
+              != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.BLUETOOTH_CONNECT)
               != PackageManager.PERMISSION_GRANTED) {
         ActivityCompat.requestPermissions(activity,
-                new String[]{Manifest.permission.BLUETOOTH_SCAN},
+                new String[]{Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT},
                 REQUEST_BLUETOOTH_SCAN);
         startScan(call, result, false);
       } else {
