@@ -1,3 +1,7 @@
+## [0.2.4]
+
+* fix Bluetooth permission for Android
+
 ## [0.2.3]
 
 * fix Bluetooth for Android
