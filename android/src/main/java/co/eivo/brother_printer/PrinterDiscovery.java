@@ -37,7 +37,7 @@ class PrinterDiscovery {
         return instance;
     }
 
-    public void start(int delay, ArrayList<String> printerNames, BRPrinterDiscoveryCompletion completion) {
+    public void start(int delay, ArrayList<String> printerNames, boolean scanBluetooth, BRPrinterDiscoveryCompletion completion) {
         if (_completionHandler != null) {
             completion.completion(null, new Exception("Already in progress"));
             return;
@@ -46,7 +46,10 @@ class PrinterDiscovery {
         _completionHandler = completion;
         _results.clear();
 
-        searchBLEPrinter(delay);
+        if (scanBluetooth) {
+            searchBLEPrinter(delay);
+        }
+
         searchWiFiPrinter(printerNames);
     }
 

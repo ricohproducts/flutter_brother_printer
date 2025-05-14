@@ -1,3 +1,25 @@
+## [0.2.4]
+
+* fix Bluetooth permission for Android
+
+## [0.2.3]
+
+* fix Bluetooth for Android
+* remove paper info binaries
+
+## [0.2.2]
+
+* add paper info binaries
+* remove brother_print_sdk-4.7.2.aar file and use jitpack
+
+## [0.2.1]
+
+* remove deprecated `PluginRegistry.Registrar` for Android
+
+## [0.2.0]
+
+* Upgrade SDK to version 4.7.2
+
 ## [0.1.5]
 
 * Add label for PT serie

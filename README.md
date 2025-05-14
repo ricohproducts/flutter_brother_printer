@@ -1,6 +1,10 @@
+[![Pub Likes](https://img.shields.io/pub/likes/brother_printer)](https://pub.dev/packages/brother_printer)
+[![Pub Popularity](https://img.shields.io/pub/popularity/brother_printer)](https://pub.dev/packages/brother_printer)
+[![Pub Points](https://img.shields.io/pub/points/brother_printer)](https://pub.dev/packages/brother_printer)
+
 # brother_printer
 
-Brother printer SDK for Flutter using native SDK v4 on iOS and v3 on Android.
+Brother printer SDK for Flutter using native SDK v4.
 
 ## Installation
 
@@ -11,7 +15,7 @@ Add this to your package's pubspec.yaml file:
 
 ```
 dependencies:
-  brother_printer: ^0.1.3
+  brother_printer: ^0.2.3
 ```
 
 ### iOS
@@ -19,7 +23,7 @@ dependencies:
 In the `Podfile` uncomment:
 
 ```
-    platform :ios, '10.0'
+    platform :ios, '13.0'
 ```
 
 In the `Info.plist` add:
@@ -50,11 +54,22 @@ Connection doesn't seem to work on emulator.
 Add permissions:
 
 ```
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_SCAN"
+        android:usesPermissionFlags="neverForLocation"
+        tools:targetApi="s" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 ```
 
 You have to manually authorized the location permission on the device (will be improve later).
@@ -99,5 +114,5 @@ There are difference between what return the iOS version and the Android version
 
 ## Author
 
-- [Jonathan VUKOVICH-TRIBOUHARET](https://github.com/jonathantribouharet)
+- [Jonathan VUKOVICH](https://github.com/johnvuko)
 
